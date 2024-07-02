@@ -1,19 +1,23 @@
-# mache: Machines for E3SM
+# Quick Start
+
+`mache` (Machines for E3SM) is a package for providing configuration data related to E3SM supported machines.
+
+(dev-installing-mache)=
 
 ## Installing mache
 
 You can install the latest release of `mache` from conda-forge:
 
-``` bash
+```bash
 conda config --add channels conda-forge
 conda config --set channel_priority strict
 conda install mache
 ```
 
 If you need to install the latest development version, you can run the
-following in the root of the mache branch you are developing:
+following in the root of the `mache` branch you are developing:
 
-``` bash
+```bash
 conda config --add channels conda-forge
 conda config --set channel_priority strict
 conda create -y -n mache_dev --file spec-file.txt
@@ -24,15 +28,50 @@ python -m pip install -e .
 To install the development version of `mache` in an existing
 environment, you can run:
 
-``` bash
+```bash
 conda install --file spec-file.txt
 python -m pip install -e .
 ```
 
+(dev-code-styling)=
 
-Example usage:
+## Code styling and linting
 
-``` python3
+`mache` uses `pre-commit` to lint incoming code when you make a commit (as long as you have your environment set up correctly), and on GitHub whenever you make a pull request to the `mache` repository. Linting makes sure your code follows the formatting guidelines of PEP8, and cleans up additional things like whitespace at the end of files.
+
+The first time you set up the `mache_dev` environment, you will need to set up `pre-commit`. This is done by running:
+
+```bash
+pre-commit install
+```
+
+You only need to do this once when you create the `mache_dev` environment. If you create a new version of `mache_dev`, then you will need to run it again.
+
+When you run `git commit <filename>`, `pre-commit` will automatically lint your code before commiting. Some formatting will be updated by `pre-commit` automatically, in which case it will terminate the commit and inform you of the change. Then you can run `git commit <filename>` again to continue the linting process until your commit is successful. Some changes need to be made manually, such as inconsistent varialbe types. When this happens, you must update the file to `pre-commit`'s standards, and then attempt to re-commit the file.
+
+Internally, `pre-commit`  uses [flake8](https://flake8.pycqa.org/en/latest/) to check PEP8
+compliance, [isort](https://pycqa.github.io/isort/) to sort, check and format
+imports, [flynt](https://github.com/ikamensh/flynt) to change any format
+strings to f-strings, and [mypy](https://mypy-lang.org/) to check for
+consistent variable types. An example error might be:
+
+```bash
+example.py:77:1: E302 expected 2 blank lines, found 1
+```
+
+For this example, we would just add an additional blank line after line 77 and
+try the commit again to make sure we've resolved the issue.
+
+You may also find it useful to use an IDE with a PEP8 style checker built in,
+such as [PyCharm](https://www.jetbrains.com/pycharm/). See
+[this tutorial](https://www.jetbrains.com/help/pycharm/tutorial-code-quality-assistance-tips-and-tricks.html)
+for some tips on checking code style in PyCharm.
+
+(dev-example-usage)=
+
+## Example usage
+
+```python
 #!/usr/bin/env python
 from mache import MachineInfo, discover_machine
 
@@ -87,7 +126,7 @@ Config options:
 ```
 
 If you are on the login node of one of the following E3SM supported
-machines, you don\'t need to provide the machine name. It can be
+machines, you don't need to provide the machine name. It can be
 discovered automatically when you create a `MachineInfo()` object or
 call `discover_machine()`. It will be recognized from the host name:
 
@@ -101,58 +140,68 @@ call `discover_machine()`. It will be recognized from the host name:
 -   frontier
 -   pm-cpu
 
-If you are on a compute node or want info about a machine you\'re not
+If you are on a compute node or want info about a machine you're not
 currently on, give the `machine` name in all lowercase.
+
+(dev-attributes)=
 
 ## Attributes
 
 The attributes currently available are:
 
-***machine : str*** \
-&nbsp;&nbsp;&nbsp;&nbsp;The name of an E3SM supported machine
+machine : str
 
-***config : configparser.ConfigParser*** \
-&nbsp;&nbsp;&nbsp;&nbsp;Config options for this machine
+: The name of an E3SM supported machine
 
-***e3sm_supported : bool*** \
-&nbsp;&nbsp;&nbsp;&nbsp;Whether this machine supports running E3SM itself, and therefore has a
-    list of compilers, MPI libraries, and the modules needed to load them
+config : configparser.ConfigParser
 
-***compilers : list*** \
-&nbsp;&nbsp;&nbsp;&nbsp;A list of compilers for this machine if `e3sm_supported == True`
+: Config options for this machine
 
-***mpilibs : list*** \
-&nbsp;&nbsp;&nbsp;&nbsp;A list of MPI libraries for this machine if `e3sm_supported == True`
+e3sm_supported : bool
 
-***os : str*** \
-&nbsp;&nbsp;&nbsp;&nbsp;The machine\'s operating system if `e3sm_supported == True`
+: Whether this machine supports running E3SM itself, and therefore has a list of compilers, MPI libraries, and the modules needed to load them
 
-***e3sm_unified_mpi : {\'nompi\', \'system\', None}*** \
-&nbsp;&nbsp;&nbsp;&nbsp;Which MPI type is included in the E3SM-Unified environment (if one
-    is loaded)
+compilers : list
 
-***e3sm_unified_base : str*** \
-&nbsp;&nbsp;&nbsp;&nbsp;The base path where E3SM-Unified and its activation scripts are
-    installed if `e3sm_unified` is not `None`
+: A list of compilers for this machine if `e3sm_supported == True`
 
-***e3sm_unified_activation : str*** \
-&nbsp;&nbsp;&nbsp;&nbsp;The activation script used to activate E3SM-Unified if
-    `e3sm_unified` is not `None`
+mpilibs : list
 
-***diagnostics_base : str*** \
-&nbsp;&nbsp;&nbsp;&nbsp;The base directory for diagnostics data
+: A list of MPI libraries for this machine if `e3sm_supported == True`
 
-***web_portal_base : str*** \
-&nbsp;&nbsp;&nbsp;&nbsp;The base directory for the web portal
+os : str
 
-***web_portal_url : str*** \
-&nbsp;&nbsp;&nbsp;&nbsp;The base URL for the web portal
+: The machine's operating system if `e3sm_supported == True`
 
-***username : str*** \
-&nbsp;&nbsp;&nbsp;&nbsp;The name of the current user, for use in web-portal directories. This
-    value is also added to the `web_portal` and `username` option of the `config` attribute.
+e3sm_unified_mpi : {'nompi', 'system', None}
 
-## Syncing Diagnostics
+: Which MPI type is included in the E3SM-Unified environment (if one is loaded)
+
+e3sm_unified_base : str
+
+: The base path where E3SM-Unified and its activation scripts are installed if `e3sm_unified` is not `None`
+
+e3sm_unified_activation : str
+
+: The activation script used to activate E3SM-Unified if `e3sm_unified` is not `None`
+
+diagnostics_base : str
+
+: The base directory for diagnostics data
+
+web_portal_base : str
+
+: The base directory for the web portal
+
+web_portal_url : str
+
+: The base URL for the web portal
+
+username : str
+
+: The name of the current user, for use in web-portal directories. This value is also added to the `web_portal` and `username` option of the `config` attribute.
+
+## Syncing diagnostics
 
 `mache` can be used to synchronize diagnostics data (observational data
 sets, testing data, mapping files, region masks, etc.) either directly
@@ -179,10 +228,10 @@ data with a shared diagnostics directory on each supported machine.
 Whenever possible, we log on to the E3SM machine and download the data
 from LCRC because this allows the synchronization tool to also update
 permissions once the data has been synchronized. This is the approach
-for all machines except for Los Alamos National Laboratory\'s Badger,
+for all machines except for Los Alamos National Laboratory's Badger,
 which is behind a firewall that prevents this approach.
 
-### One-time Setup
+### One-time setup
 
 To synchronize data from LCRC to other machines, you must first provide
 your SSH keys by going to the [Argonne
@@ -190,7 +239,7 @@ Accounts](https://accounts.cels.anl.gov/) page, logging in, and adding
 the public ssh key for each machine. If you have not yet generated an
 SSH key for the destination machine, you will need to run:
 
-``` bash
+```bash
 ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
@@ -216,7 +265,7 @@ where, again `<ac.user>` is your username on LCRC.
 
 To synchronize diagnostics data from LCRC, simply run:
 
-``` bash
+```bash
 mache sync diags from anvil -u <ac.user>
 ```
 
@@ -226,19 +275,19 @@ where `<ac.user>` is your account name on LCRC.
 
 To synchronize diagnostics on an LCRC machine, run:
 
-``` bash
+```bash
 mache sync diags from anvil
 ```
 
 Make sure the machine after `from` is the same as the machine you are
 on, `anvil` in this example.
 
-### Syncing to Machines with Firewalls
+### Syncing to machines with firewalls
 
 To synchronize diagnostics data to a machine with a firewall by using a
 tunnel, first log on to an LCRC machine, then run:
 
-``` bash
+```bash
 mache sync diags to chicoma-cpu -u <username>
 ```
 
