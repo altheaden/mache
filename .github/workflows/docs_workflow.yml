@@ -20,16 +20,6 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      # - name: Cache Conda
-        # uses: actions/cache@v4
-        # env:
-          # Increase this value to reset cache if deploy/conda-dev-spec.template has not changed in the workflow
-          # CACHE_NUMBER: 0
-        # with:
-          # path: ~/conda_pkgs_dir
-          # key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
-            # hashFiles('configure_polaris_envs.py,deploy/*') }}
-
       - if: ${{ steps.skip_check.outputs.should_skip != 'true' }}
         name: Set up Conda Environment
         uses: conda-incubator/setup-miniconda@v3
@@ -66,7 +56,7 @@ jobs:
           mache sync diags --help
           cd docs
           # gh-pages branch must already exist
-          git clone https://github.com/E3SM-Project/mache.git --branch gh-pages --single-branch gh-pages
+          git clone https://github.com/altheaden/mache.git --branch gh-pages --single-branch gh-pages
           # Make sure we're in the gh-pages directory.
           cd gh-pages
           # Create `.nojekyll` (if it doesn't already exist) for proper GH Pages configuration.
