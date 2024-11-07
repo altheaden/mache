@@ -35,9 +35,11 @@ def build_env(options):
         f'conda config --add channels conda-forge && ' \
         f'conda config --set channel_priority strict && ' \
         f'conda create -y -n begin_mache_deploy --file {options["spec_file"]}'
-    check_call(commands)
+    # check_call(commands)
+    subprocess.run(commands, check=True, universal_newlines=True, shell=True)
 
 
+'''
 def check_call(commands, env=None, logger=None):
     command_list = commands.replace(' && ', '; ').split('; ')
     print_command = '\n   '.join(command_list)
@@ -67,6 +69,7 @@ def check_call(commands, env=None, logger=None):
 
     if process.returncode != 0:
         raise subprocess.CalledProcessError(process.returncode, commands)
+'''
 
 
 if __name__ == '__main__':
