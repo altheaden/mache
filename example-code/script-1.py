@@ -1,19 +1,28 @@
 #!/usr/bin/env python3
+import subprocess
+import sys
 from urllib.request import urlretrieve
 
 
 def main():
-    # get the general script
-    # make call and send arguments to general script
-    filename = 'mache/deploy/script-2.py'
-    # TODO: We probably want a better way of doing this, such as to make sure
-    # TODO: we are getting this from the correct branch and not just from main
-    branch = 'develop'  # (low priority) add cmd line arg to change maybe
-    url = f'https://raw.githubusercontent.com/altheaden/mache/{branch}/{filename}'
-    print(url)
-    urlretrieve(url, "script-2.py")
-    # execute the configure script. Send the software name (e.g., polaris)
-    name = 'test'
+    args = sys.argv[1:]
+    # FIXME: issue when running python3 <script> vs ./<script>
+    print(f'args: {args}')
+    remote_filepath = 'mache/deploy/script-2.py'  # path to file on GitHub
+    branch = 'develop'  # TODO: (low priority) add cmd line arg to change?
+    url = \
+        f'https://raw.githubusercontent.com/altheaden/mache/' \
+        f'{branch}/{remote_filepath}'
+    local_filename = 'downloaded-script.py'
+    print(f"Retrieving file from {url} and saving into {local_filename}")
+    urlretrieve(url, local_filename)
+    # execute the downloaded script
+    commands = ['python3', local_filename] + args
+    subprocess.run(commands, check=True, universal_newlines=True, shell=False)
+    # TODO: Look into logging (redirecting) within subprocess.run call ???
+    #       find example where stdout/stderr are files
+    #       want to be able to redirect to either terminal or file depending
+    #       on flags (like in mpas-tools) -> could be in script 2
 
 
 if __name__ == '__main__':
