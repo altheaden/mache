@@ -3,6 +3,8 @@ name: Pre-commit auto-update
 on:
   schedule:
     - cron: '0 8 * * 3'
+  push:
+    branches: [main]
 
 jobs:
   auto-update:
@@ -20,7 +22,7 @@ jobs:
 
       - name: Apply and commit updates
         run: |
-          git clone https://github.com/E3SM-Project/mache.git update-pre-commit-deps
+          git clone https://github.com/altheaden/mache.git update-pre-commit-deps
           cd update-pre-commit-deps
           # Configure git using GitHub Actions credentials.
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -28,7 +30,7 @@ jobs:
           git checkout -b update-pre-commit-deps
           pre-commit autoupdate
           git add .
-          # The second command will fail if no changes were present, so we ignore it
+          # The second command will fail if no changes were present, so we ignore it 
           git commit -m "Update pre-commit dependencies" || true
 
       - name: Push Changes
