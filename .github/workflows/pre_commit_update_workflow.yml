@@ -3,6 +3,8 @@ name: Pre-commit auto-update
 on:
   schedule:
     - cron: '0 3 * * 1'
+  push:
+    branches: [main]
 
 jobs:
   auto-update:
@@ -18,20 +20,37 @@ jobs:
       - name: Install pre-commit
         run: pip install pre-commit
 
-      - name: Run pre-commit autoupdate
-        run: pre-commit autoupdate
-
-      - name: Commit updates and create PR
+      - name: Apply and commit updates
         run: |
-          git clone https://github.com/E3SM-Project/mache.git
+          git clone https://github.com/altheaden/mache.git update-pre-commit-deps
+          cd update-pre-commit-deps
           # Configure git using GitHub Actions credentials.
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git checkout -b update-pre-commit-deps
+          pre-commit autoupdate
           git add .pre-commit-config.yaml
           git commit -m "Update pre-commit dependencies" .pre-commit-config.yaml
-          git push origin update-pre-commit-deps
-          gh pr create --title "Update `pre-commit` and its dependencies" --body "This PR was automatically created to update pre-commit and its dependencies."
+
+      - name: Push Changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: update-pre-commit-deps
+          directory: update-pre-commit-deps
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Make PR
+        run: |
+          cd update-pre-commit-deps
+          # Configure git using GitHub Actions credentials.
+          # git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # git config --local user.name "github-actions[bot]"
+          gh pr create --title "Update pre-commit and its dependencies" \
+          --body "This PR was auto-generated to update pre-commit and its dependencies." \
+          --head update-pre-commit-deps
         env:
           GH_TOKEN: ${{ github.token }}
 
