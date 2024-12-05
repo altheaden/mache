@@ -9,6 +9,11 @@ on:
     # 4. Entry: Month of the year when the process will be started [1-12]
     # 5. Entry: Weekday when the process will be started [0-6] [0 is Sunday]
     - cron: '0 8 * * 3'
+  push:
+    branches: [main]
+
+env:
+  UP_TO_DATE: false
 
 jobs:
   auto-update:
@@ -26,7 +31,7 @@ jobs:
 
       - name: Apply and commit updates
         run: |
-          git clone https://github.com/E3SM-Project/mache.git update-pre-commit-deps
+          git clone https://github.com/altheaden/mache.git update-pre-commit-deps
           cd update-pre-commit-deps
           # Configure git using GitHub Actions credentials.
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -35,9 +40,11 @@ jobs:
           pre-commit autoupdate
           git add .
           # The second command will fail if no changes were present, so we ignore it
-          git commit -m "Update pre-commit dependencies" || true
+          git commit -m "Update pre-commit dependencies" || ( echo "UP_TO_DATE=true" >> $GITHUB_ENV )
+          echo ${{ env.UP_TO_DATE }}
 
       - name: Push Changes
+        if: ${{ env.UP_TO_DATE != true }}
         uses: ad-m/github-push-action@master
         with:
           branch: update-pre-commit-deps
@@ -47,12 +54,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Make PR
+      - name: Make PR and add reviewers and labels
+        if: ${{ env.UP_TO_DATE != 'true' }}
         run: |
           cd update-pre-commit-deps
-          gh pr create --title "Update pre-commit and its dependencies" \
+          gh pr create \
+          --title "Update pre-commit and its dependencies" \
           --body "This PR was auto-generated to update pre-commit and its dependencies." \
-          --head update-pre-commit-deps
+          --head update-pre-commit-deps \
+          --reviewer altheaden \
+          --label ci
         env:
           GH_TOKEN: ${{ github.token }}
 
