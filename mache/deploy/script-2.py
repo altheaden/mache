@@ -4,6 +4,7 @@ import os
 import platform
 import subprocess
 import sys
+from configparser import ConfigParser
 from urllib.request import Request, urlopen
 
 
@@ -14,14 +15,12 @@ def main():
     #    need to parse arguments to install local vs conda mache ?
     # begin deployment
     #    send the rest of the arguments to the next script (bootstrap)
-    args = parse_args()
-    print(f"DEBUG original args: {args}")
+    args = _parse_args()
     options = vars(args)
-    print(f"DEBUG var args: {options}")
-    build_env(options)
+    _build_env(options)
 
 
-def parse_args():
+def _parse_args():
     parser = argparse.ArgumentParser(
         description='Deploy a mache conda environment')
     parser.add_argument("--conda", dest="conda_base",
@@ -35,12 +34,15 @@ def parse_args():
     return args
 
 
-def build_env(options):
-    conda_base = get_conda_base(options['conda_base'])
-    print(f"DEBUG conda base for installing miniforge: {conda_base}")
+def _build_env(options):
+    if options['tmpdir'] is not None:
+        os.makedirs(name=args.tmpdir, exist_ok=True)
+
+    config = _get_config(options['config_file'])
+    conda_base = _get_conda_base(options['conda_base'])
     activate_base = \
         f'source {conda_base}/etc/profile.d/conda.sh && conda activate'
-    install_miniforge(conda_base, activate_base, None)
+    _install_miniforge(conda_base, activate_base, None)
     print('DEBUG: running coda commands to build env')
     commands = \
         f'{activate_base} && ' \
@@ -50,7 +52,24 @@ def build_env(options):
     subprocess.run(commands, check=True, universal_newlines=True, shell=True)
 
 
-def get_conda_base(conda_base, shared=False, warn=False):
+def _get_config(config_file):
+    """
+    Read in the options from the config file and return the config object
+    """
+
+    # we can't load polaris so we find the config files
+    here = os.path.abspath(os.path.dirname(__file__))
+    default_config = os.path.join(here, 'deploy/default.cfg')
+    config = ConfigParser()
+    config.read(default_config)
+
+    if config_file is not None:
+        config.read(config_file)
+
+    return config
+
+
+def _get_conda_base(conda_base, shared=False, warn=False):
     # TODO: add config back
     """
     Get the absolute path to the files for the conda base environment
@@ -96,7 +115,7 @@ def get_conda_base(conda_base, shared=False, warn=False):
     return conda_base
 
 
-def install_miniforge(conda_base, activate_base, logger):
+def _install_miniforge(conda_base, activate_base, logger):
     """
     Install Miniforge if it isn't installed already
 
