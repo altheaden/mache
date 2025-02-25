@@ -77,7 +77,7 @@ class MachineInfo:
         if machine is None:
             machine = discover_machine(quiet=quiet)
             if machine is None:
-                raise ValueError('Unable to discover machine from host name')
+                raise ValueError("Unable to discover machine from host name")
         self.machine = machine
 
         self.config = self._get_config()
@@ -100,9 +100,9 @@ class MachineInfo:
         self.web_portal_url = None
 
         self.username = pwd.getpwuid(os.getuid()).pw_name
-        if not self.config.has_section('web_portal'):
-            self.config.add_section('web_portal')
-        self.config.set('web_portal', 'username', self.username)
+        if not self.config.has_section("web_portal"):
+            self.config.add_section("web_portal")
+        self.config.set("web_portal", "username", self.username)
 
     def __str__(self):
         """
@@ -114,70 +114,57 @@ class MachineInfo:
             The contents as a string for printing to the terminal
         """
 
-        info = \
-            f'Machine: {self.machine}\n' \
-            f'  E3SM Supported Machine: {self.e3sm_supported}'
+        info = (
+            f"Machine: {self.machine}\n  E3SM Supported Machine: {self.e3sm_supported}"
+        )
 
-        if self.e3sm_supported and self.compilers is not None and \
-                self.mpilibs is not None and self.os is not None:
-            info = \
-                f'{info}\n' \
-                f'  Compilers: {", ".join(self.compilers)}\n' \
-                f'  MPI libraries: {", ".join(self.mpilibs)}\n' \
-                f'  OS: {self.os}'
+        if (
+            self.e3sm_supported
+            and self.compilers is not None
+            and self.mpilibs is not None
+            and self.os is not None
+        ):
+            info = (
+                f"{info}\n"
+                f"  Compilers: {', '.join(self.compilers)}\n"
+                f"  MPI libraries: {', '.join(self.mpilibs)}\n"
+                f"  OS: {self.os}"
+            )
 
-        info = f'{info}\n'
+        info = f"{info}\n"
 
-        print_unified = (self.e3sm_unified_activation is not None or
-                         self.e3sm_unified_base is not None or
-                         self.e3sm_unified_mpi is not None)
+        print_unified = (
+            self.e3sm_unified_activation is not None
+            or self.e3sm_unified_base is not None
+            or self.e3sm_unified_mpi is not None
+        )
         if print_unified:
-            info = \
-                f'{info}\n' \
-                f'E3SM-Unified: '
+            info = f"{info}\nE3SM-Unified: "
 
             if self.e3sm_unified_activation is None:
-                info = \
-                    f'{info}\n' \
-                    f'  E3SM-Unified is not currently loaded'
+                info = f"{info}\n  E3SM-Unified is not currently loaded"
             else:
-                info = \
-                    f'{info}\n' \
-                    f'  Activation: {self.e3sm_unified_activation}'
+                info = f"{info}\n  Activation: {self.e3sm_unified_activation}"
             if self.e3sm_unified_base is not None:
-                info = \
-                    f'{info}\n' \
-                    f'  Base path: {self.e3sm_unified_base}'
+                info = f"{info}\n  Base path: {self.e3sm_unified_base}"
             if self.e3sm_unified_mpi is not None:
-                info = \
-                    f'{info}\n' \
-                    f'  MPI type: {self.e3sm_unified_mpi}'
-            info = f'{info}\n'
+                info = f"{info}\n  MPI type: {self.e3sm_unified_mpi}"
+            info = f"{info}\n"
 
         print_diags = self.diagnostics_base is not None
         if print_diags:
-            info = \
-                f'{info}\n' \
-                f'Diagnostics: '
+            info = f"{info}\nDiagnostics: "
 
             if self.diagnostics_base is not None:
-                info = \
-                    f'{info}\n' \
-                    f'  Base path: {self.diagnostics_base}'
-            info = f'{info}\n'
+                info = f"{info}\n  Base path: {self.diagnostics_base}"
+            info = f"{info}\n"
 
-        info = \
-            f'{info}\n' \
-            f'Config options: '
+        info = f"{info}\nConfig options: "
         for section in self.config.sections():
-            info = \
-                f'{info}\n' \
-                f'  [{section}]'
+            info = f"{info}\n  [{section}]"
             for key, value in self.config.items(section):
-                info = \
-                    f'{info}\n' \
-                    f'    {key} = {value}'
-            info = f'{info}\n'
+                info = f"{info}\n    {key} = {value}"
+            info = f"{info}\n"
         return info
 
     def get_account_defaults(self):
@@ -203,68 +190,69 @@ class MachineInfo:
             QOS should be specified
         """
         config = self.config
-        if config.has_option('parallel', 'account'):
-            account = config.get('parallel', 'account')
+        if config.has_option("parallel", "account"):
+            account = config.get("parallel", "account")
         else:
             account = None
 
-        if config.has_option('parallel', 'partitions'):
-            partition = config.get('parallel', 'partitions')
+        if config.has_option("parallel", "partitions"):
+            partition = config.get("parallel", "partitions")
             # take the first entry
-            partition = partition.split(',')[0].strip()
+            partition = partition.split(",")[0].strip()
         else:
             partition = None
 
-        if config.has_option('parallel', 'constraints'):
-            constraint = config.get('parallel', 'constraints')
+        if config.has_option("parallel", "constraints"):
+            constraint = config.get("parallel", "constraints")
             # take the first entry
-            constraint = constraint.split(',')[0].strip()
+            constraint = constraint.split(",")[0].strip()
         else:
             constraint = None
 
-        if config.has_option('parallel', 'qos'):
-            qos = config.get('parallel', 'qos')
+        if config.has_option("parallel", "qos"):
+            qos = config.get("parallel", "qos")
             # take the first entry
-            qos = qos.split(',')[0].strip()
+            qos = qos.split(",")[0].strip()
         else:
             qos = None
 
         return account, partition, constraint, qos
 
     def _get_config(self):
-        """ get a parser for config options """
+        """get a parser for config options"""
 
         config = configparser.ConfigParser(
-            interpolation=configparser.ExtendedInterpolation())
+            interpolation=configparser.ExtendedInterpolation()
+        )
 
         machine = self.machine
         try:
-            cfg_path = \
-                importlib_resources.files('mache.machines') / f'{machine}.cfg'
+            cfg_path = importlib_resources.files("mache.machines") / f"{machine}.cfg"
             config.read(str(cfg_path))
         except FileNotFoundError:
             # this isn't a known machine so use the default
-            cfg_path = \
-                importlib_resources.files('mache.machines') / 'default.cfg'
+            cfg_path = importlib_resources.files("mache.machines") / "default.cfg"
             config.read(str(cfg_path))
 
         return config
 
     def _parse_compilers_and_mpi(self):
-        """ Parse the compilers and mpi modules from XML config files """
+        """Parse the compilers and mpi modules from XML config files"""
         machine = self.machine
 
-        xml_path = (importlib_resources.files('mache.cime_machine_config') /
-                    'config_machines.xml')
+        xml_path = (
+            importlib_resources.files("mache.cime_machine_config")
+            / "config_machines.xml"
+        )
 
         root = etree.parse(str(xml_path))
 
-        machines = next(root.iter('config_machines'))
+        machines = next(root.iter("config_machines"))
 
         mach = None
         found = False
         for mach in machines:
-            if mach.tag == 'machine' and mach.attrib['MACH'] == machine:
+            if mach.tag == "machine" and mach.attrib["MACH"] == machine:
                 found = True
                 break
 
@@ -276,47 +264,45 @@ class MachineInfo:
         self.e3sm_supported = True
         compilers = None
         for child in mach:
-            if child.tag == 'COMPILERS':
-                compilers = child.text.split(',')
+            if child.tag == "COMPILERS":
+                compilers = child.text.split(",")
                 break
 
         self.compilers = compilers
 
         mpilibs = None
         for child in mach:
-            if child.tag == 'MPILIBS':
-                mpilibs = child.text.split(',')
+            if child.tag == "MPILIBS":
+                mpilibs = child.text.split(",")
                 break
 
         self.mpilibs = mpilibs
 
         machine_os = None
         for child in mach:
-            if child.tag == 'OS':
+            if child.tag == "OS":
                 machine_os = child.text
                 break
 
         self.os = machine_os
 
     def _detect_e3sm_unified(self):
-        """ Read E3SM-Unified base path and detect whether it is running """
+        """Read E3SM-Unified base path and detect whether it is running"""
         config = self.config
 
-        if config is not None and \
-                config.has_option('e3sm_unified', 'base_path'):
-            self.e3sm_unified_base = config.get('e3sm_unified', 'base_path')
+        if config is not None and config.has_option("e3sm_unified", "base_path"):
+            self.e3sm_unified_base = config.get("e3sm_unified", "base_path")
 
-        if 'E3SMU_SCRIPT' in os.environ:
-            self.e3sm_unified_activation = os.environ['E3SMU_SCRIPT']
+        if "E3SMU_SCRIPT" in os.environ:
+            self.e3sm_unified_activation = os.environ["E3SMU_SCRIPT"]
 
-        if 'E3SMU_MPI' in os.environ:
-            self.e3sm_unified_mpi = os.environ['E3SMU_MPI'].lower()
+        if "E3SMU_MPI" in os.environ:
+            self.e3sm_unified_mpi = os.environ["E3SMU_MPI"].lower()
 
     def _get_diagnostics_info(self):
-        """ Get config options related to diagnostics data """
+        """Get config options related to diagnostics data"""
 
         config = self.config
 
-        if config is not None and \
-                config.has_option('diagnostics', 'base_path'):
-            self.diagnostics_base = config.get('diagnostics', 'base_path')
+        if config is not None and config.has_option("diagnostics", "base_path"):
+            self.diagnostics_base = config.get("diagnostics", "base_path")

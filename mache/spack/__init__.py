@@ -9,11 +9,21 @@ from mache.machine_info import MachineInfo, discover_machine
 from mache.version import __version__
 
 
-def make_spack_env(spack_path, env_name, spack_specs, compiler, mpi,
-                   machine=None, config_file=None, include_e3sm_lapack=False,
-                   include_e3sm_hdf5_netcdf=False,
-                   yaml_template=None, tmpdir=None, spack_mirror=None,
-                   custom_spack=''):
+def make_spack_env(
+    spack_path,
+    env_name,
+    spack_specs,
+    compiler,
+    mpi,
+    machine=None,
+    config_file=None,
+    include_e3sm_lapack=False,
+    include_e3sm_hdf5_netcdf=False,
+    yaml_template=None,
+    tmpdir=None,
+    spack_mirror=None,
+    custom_spack="",
+):
     """
     Clone the ``spack_for_mache_{{version}}`` branch from
     `E3SM's spack clone <https://github.com/E3SM-Project/spack>`_ and build
@@ -71,7 +81,7 @@ def make_spack_env(spack_path, env_name, spack_specs, compiler, mpi,
     if machine is None:
         machine = discover_machine()
         if machine is None:
-            raise ValueError('Unable to discover machine form host name')
+            raise ValueError("Unable to discover machine form host name")
 
     machine_info = MachineInfo(machine)
 
@@ -79,35 +89,38 @@ def make_spack_env(spack_path, env_name, spack_specs, compiler, mpi,
     if config_file is not None:
         config.read(config_file)
 
-    section = config['spack']
+    section = config["spack"]
 
-    with_modules = (section.getboolean('modules_before') or
-                    section.getboolean('modules_after'))
+    with_modules = section.getboolean("modules_before") or section.getboolean(
+        "modules_after"
+    )
 
     # add the package specs to the appropriate template
-    specs = ''.join([f'  - {spec}\n' for spec in spack_specs])  # noqa: E221
+    specs = "".join([f"  - {spec}\n" for spec in spack_specs])  # noqa: E221
 
-    yaml_data = _get_yaml_data(machine, compiler, mpi, include_e3sm_lapack,
-                               include_e3sm_hdf5_netcdf, specs,
-                               yaml_template)
+    yaml_data = _get_yaml_data(
+        machine,
+        compiler,
+        mpi,
+        include_e3sm_lapack,
+        include_e3sm_hdf5_netcdf,
+        specs,
+        yaml_template,
+    )
 
-    yaml_filename = os.path.abspath(f'{env_name}.yaml')
-    with open(yaml_filename, 'w') as handle:
+    yaml_filename = os.path.abspath(f"{env_name}.yaml")
+    with open(yaml_filename, "w") as handle:
         handle.write(yaml_data)
 
     if with_modules:
         mods = _get_modules(yaml_data)
-        modules = \
-            f'module purge\n' \
-            f'{mods}'
+        modules = f"module purge\n{mods}"
     else:
-        modules = ''
+        modules = ""
 
-    for shell_filename in [f'{machine}.sh',
-                           f'{machine}_{compiler}_{mpi}.sh']:
+    for shell_filename in [f"{machine}.sh", f"{machine}_{compiler}_{mpi}.sh"]:
         # load modules, etc. for this machine
-        path = \
-            importlib_resources.files('mache.spack') / shell_filename
+        path = importlib_resources.files("mache.spack") / shell_filename
         try:
             with open(str(path)) as fp:
                 template = Template(fp.read())
@@ -115,42 +128,51 @@ def make_spack_env(spack_path, env_name, spack_specs, compiler, mpi,
             # there's nothing to add, which is fine
             continue
         bash_script = template.render(
-            e3sm_lapack=include_e3sm_lapack,
-            e3sm_hdf5_netcdf=include_e3sm_hdf5_netcdf)
+            e3sm_lapack=include_e3sm_lapack, e3sm_hdf5_netcdf=include_e3sm_hdf5_netcdf
+        )
 
-        modules = f'{modules}\n{bash_script}'
+        modules = f"{modules}\n{bash_script}"
 
-    path = \
-        importlib_resources.files('mache.spack') / 'build_spack_env.template'
+    path = importlib_resources.files("mache.spack") / "build_spack_env.template"
     with open(str(path)) as fp:
         template = Template(fp.read())
     if tmpdir is not None:
-        modules = \
-            f'{modules}\n' \
-            f'export TMPDIR={tmpdir}'
+        modules = f"{modules}\nexport TMPDIR={tmpdir}"
 
-    template_args = dict(modules=modules, version=__version__,
-                         spack_path=spack_path, env_name=env_name,
-                         yaml_filename=yaml_filename,
-                         custom_spack=custom_spack)
+    template_args = dict(
+        modules=modules,
+        version=__version__,
+        spack_path=spack_path,
+        env_name=env_name,
+        yaml_filename=yaml_filename,
+        custom_spack=custom_spack,
+    )
 
     if spack_mirror is not None:
-        template_args['spack_mirror'] = spack_mirror
+        template_args["spack_mirror"] = spack_mirror
 
     build_file = template.render(**template_args)
-    build_filename = f'build_{env_name}.bash'
-    with open(build_filename, 'w') as handle:
+    build_filename = f"build_{env_name}.bash"
+    with open(build_filename, "w") as handle:
         handle.write(build_file)
 
     # clear environment variables and start fresh with those from login
     # so spack doesn't get confused by conda
-    subprocess.check_call(f'env -i bash -l {build_filename}', shell=True)
+    subprocess.check_call(f"env -i bash -l {build_filename}", shell=True)
 
 
-def get_spack_script(spack_path, env_name, compiler, mpi, shell, machine=None,
-                     config_file=None, include_e3sm_lapack=False,
-                     include_e3sm_hdf5_netcdf=False,
-                     yaml_template=None):
+def get_spack_script(
+    spack_path,
+    env_name,
+    compiler,
+    mpi,
+    shell,
+    machine=None,
+    config_file=None,
+    include_e3sm_lapack=False,
+    include_e3sm_hdf5_netcdf=False,
+    yaml_template=None,
+):
     """
     Build a snippet of a load script for the given spack environment
 
@@ -203,7 +225,7 @@ def get_spack_script(spack_path, env_name, compiler, mpi, shell, machine=None,
     if machine is None:
         machine = discover_machine()
         if machine is None:
-            raise ValueError('Unable to discover machine form host name')
+            raise ValueError("Unable to discover machine form host name")
 
     machine_info = MachineInfo(machine)
 
@@ -211,33 +233,38 @@ def get_spack_script(spack_path, env_name, compiler, mpi, shell, machine=None,
     if config_file is not None:
         config.read(config_file)
 
-    section = config['spack']
+    section = config["spack"]
 
-    modules_before = section.getboolean('modules_before')
-    modules_after = section.getboolean('modules_after')
+    modules_before = section.getboolean("modules_before")
+    modules_after = section.getboolean("modules_after")
 
     yaml_data = _get_yaml_data(
-        machine, compiler, mpi, include_e3sm_lapack, include_e3sm_hdf5_netcdf,
-        specs='', yaml_template=yaml_template)
+        machine,
+        compiler,
+        mpi,
+        include_e3sm_lapack,
+        include_e3sm_hdf5_netcdf,
+        specs="",
+        yaml_template=yaml_template,
+    )
 
     if modules_before or modules_after:
-        load_script = 'module purge\n'
+        load_script = "module purge\n"
         if modules_before:
             mods = _get_modules(yaml_data)
-            load_script = f'{load_script}\n{mods}\n'
+            load_script = f"{load_script}\n{mods}\n"
     else:
-        load_script = ''
+        load_script = ""
 
-    load_script = \
-        f'{load_script}' \
-        f'source {spack_path}/share/spack/setup-env.{shell}\n' \
-        f'spack env activate {env_name}'
+    load_script = (
+        f"{load_script}"
+        f"source {spack_path}/share/spack/setup-env.{shell}\n"
+        f"spack env activate {env_name}"
+    )
 
-    for shell_filename in [f'{machine}.{shell}',
-                           f'{machine}_{compiler}_{mpi}.{shell}']:
+    for shell_filename in [f"{machine}.{shell}", f"{machine}_{compiler}_{mpi}.{shell}"]:
         # load modules, etc. for this machine
-        path = \
-            importlib_resources.files('mache.spack') / shell_filename
+        path = importlib_resources.files("mache.spack") / shell_filename
         try:
             with open(str(path)) as fp:
                 template = Template(fp.read())
@@ -245,21 +272,26 @@ def get_spack_script(spack_path, env_name, compiler, mpi, shell, machine=None,
             # there's nothing to add, which is fine
             continue
         shell_script = template.render(
-            e3sm_lapack=include_e3sm_lapack,
-            e3sm_hdf5_netcdf=include_e3sm_hdf5_netcdf)
-        load_script = f'{load_script}\n{shell_script}'
+            e3sm_lapack=include_e3sm_lapack, e3sm_hdf5_netcdf=include_e3sm_hdf5_netcdf
+        )
+        load_script = f"{load_script}\n{shell_script}"
 
     if modules_after:
         mods = _get_modules(yaml_data)
-        load_script = f'{load_script}\n{mods}'
+        load_script = f"{load_script}\n{mods}"
 
     return load_script
 
 
-def get_modules_env_vars_and_mpi_compilers(machine, compiler, mpi, shell,
-                                           include_e3sm_lapack=False,
-                                           include_e3sm_hdf5_netcdf=False,
-                                           yaml_template=None):
+def get_modules_env_vars_and_mpi_compilers(
+    machine,
+    compiler,
+    mpi,
+    shell,
+    include_e3sm_lapack=False,
+    include_e3sm_hdf5_netcdf=False,
+    yaml_template=None,
+):
     """
     Get the non-spack modules, environment variables and compiler names for a
     given machine, compiler and MPI library.
@@ -311,35 +343,39 @@ def get_modules_env_vars_and_mpi_compilers(machine, compiler, mpi, shell,
     if machine is None:
         machine = discover_machine()
         if machine is None:
-            raise ValueError('Unable to discover machine form host name')
+            raise ValueError("Unable to discover machine form host name")
 
     machine_info = MachineInfo(machine)
 
     config = machine_info.config
     cray_compilers = False
-    if config.has_section('spack'):
-        section = config['spack']
+    if config.has_section("spack"):
+        section = config["spack"]
 
-        with_modules = (section.getboolean('modules_before') or
-                        section.getboolean('modules_after'))
-        if config.has_option('spack', 'cray_compilers'):
-            cray_compilers = section.getboolean('cray_compilers')
+        with_modules = section.getboolean("modules_before") or section.getboolean(
+            "modules_after"
+        )
+        if config.has_option("spack", "cray_compilers"):
+            cray_compilers = section.getboolean("cray_compilers")
     else:
         with_modules = False
 
-    mod_env_commands = 'module purge\n'
+    mod_env_commands = "module purge\n"
     if with_modules:
         yaml_data = _get_yaml_data(
-            machine, compiler, mpi, include_e3sm_lapack,
-            include_e3sm_hdf5_netcdf, specs='',
-            yaml_template=yaml_template)
+            machine,
+            compiler,
+            mpi,
+            include_e3sm_lapack,
+            include_e3sm_hdf5_netcdf,
+            specs="",
+            yaml_template=yaml_template,
+        )
         mods = _get_modules(yaml_data)
-        mod_env_commands = f'{mod_env_commands}\n{mods}\n'
+        mod_env_commands = f"{mod_env_commands}\n{mods}\n"
 
-    for shell_filename in [f'{machine}.{shell}',
-                           f'{machine}_{compiler}_{mpi}.{shell}']:
-        path = \
-            importlib_resources.files('mache.spack') / shell_filename
+    for shell_filename in [f"{machine}.{shell}", f"{machine}_{compiler}_{mpi}.{shell}"]:
+        path = importlib_resources.files("mache.spack") / shell_filename
         try:
             with open(str(path)) as fp:
                 template = Template(fp.read())
@@ -347,73 +383,74 @@ def get_modules_env_vars_and_mpi_compilers(machine, compiler, mpi, shell,
             # there's nothing to add, which is fine
             continue
         shell_script = template.render(
-            e3sm_lapack=include_e3sm_lapack,
-            e3sm_hdf5_netcdf=include_e3sm_hdf5_netcdf)
-        mod_env_commands = f'{mod_env_commands}\n{shell_script}'
+            e3sm_lapack=include_e3sm_lapack, e3sm_hdf5_netcdf=include_e3sm_hdf5_netcdf
+        )
+        mod_env_commands = f"{mod_env_commands}\n{shell_script}"
 
-    mpicc, mpicxx, mpifc = _get_mpi_compilers(machine, compiler, mpi,
-                                              cray_compilers)
+    mpicc, mpicxx, mpifc = _get_mpi_compilers(machine, compiler, mpi, cray_compilers)
 
     return mpicc, mpicxx, mpifc, mod_env_commands
 
 
-def _get_yaml_data(machine, compiler, mpi, include_e3sm_lapack,
-                   include_e3sm_hdf5_netcdf, specs,
-                   yaml_template):
-    """ Get the data from the jinja-templated yaml file based on settings """
+def _get_yaml_data(
+    machine,
+    compiler,
+    mpi,
+    include_e3sm_lapack,
+    include_e3sm_hdf5_netcdf,
+    specs,
+    yaml_template,
+):
+    """Get the data from the jinja-templated yaml file based on settings"""
     if yaml_template is None:
-        template_filename = f'{machine}_{compiler}_{mpi}.yaml'
-        path = \
-            importlib_resources.files('mache.spack') / template_filename
+        template_filename = f"{machine}_{compiler}_{mpi}.yaml"
+        path = importlib_resources.files("mache.spack") / template_filename
         try:
             with open(str(path)) as fp:
                 template = Template(fp.read())
         except FileNotFoundError as err:
-            raise ValueError(f'Spack template not available for {compiler} '
-                             f'and {mpi} on {machine}.') from err
+            raise ValueError(
+                f"Spack template not available for {compiler} and {mpi} on {machine}."
+            ) from err
     else:
         with open(yaml_template) as f:
             template = Template(f.read())
 
-    yaml_data = template.render(specs=specs,
-                                e3sm_lapack=include_e3sm_lapack,
-                                e3sm_hdf5_netcdf=include_e3sm_hdf5_netcdf)
+    yaml_data = template.render(
+        specs=specs,
+        e3sm_lapack=include_e3sm_lapack,
+        e3sm_hdf5_netcdf=include_e3sm_hdf5_netcdf,
+    )
     return yaml_data
 
 
 def _get_modules(yaml_string):
-    """ Get a list of modules from a yaml file """
+    """Get a list of modules from a yaml file"""
     yaml_data = yaml.safe_load(yaml_string)
     mods = []
-    if 'spack' in yaml_data and 'packages' in yaml_data['spack']:
-        package_data = yaml_data['spack']['packages']
+    if "spack" in yaml_data and "packages" in yaml_data["spack"]:
+        package_data = yaml_data["spack"]["packages"]
         for package in package_data.values():
-            if 'externals' in package:
-                for item in package['externals']:
-                    if 'modules' in item:
-                        for mod in item['modules']:
-                            mods.append(f'module load {mod}')
+            if "externals" in package:
+                for item in package["externals"]:
+                    if "modules" in item:
+                        for mod in item["modules"]:
+                            mods.append(f"module load {mod}")
 
-    mods_str = '\n'.join(mods)
+    mods_str = "\n".join(mods)
 
     return mods_str
 
 
 def _get_mpi_compilers(machine, compiler, mpi, cray_compilers):
-    """ Get a list of compilers from a yaml file """
+    """Get a list of compilers from a yaml file"""
 
-    mpi_compilers = {'gnu': {'mpicc': 'mpicc',
-                             'mpicxx': 'mpicxx',
-                             'mpifc': 'mpif90'},
-                     'intel': {'mpicc': 'mpicc',
-                               'mpicxx': 'mpicxx',
-                               'mpifc': 'mpif90'},
-                     'impi': {'mpicc': 'mpiicc',
-                              'mpicxx': 'mpiicpc',
-                              'mpifc': 'mpiifort'},
-                     'cray': {'mpicc': 'cc',
-                              'mpicxx': 'CC',
-                              'mpifc': 'ftn'}}
+    mpi_compilers = {
+        "gnu": {"mpicc": "mpicc", "mpicxx": "mpicxx", "mpifc": "mpif90"},
+        "intel": {"mpicc": "mpicc", "mpicxx": "mpicxx", "mpifc": "mpif90"},
+        "impi": {"mpicc": "mpiicc", "mpicxx": "mpiicpc", "mpifc": "mpiifort"},
+        "cray": {"mpicc": "cc", "mpicxx": "CC", "mpifc": "ftn"},
+    }
 
     mpi_compiler = None
     # first, get mpi compilers based on compiler
@@ -426,10 +463,11 @@ def _get_mpi_compilers(machine, compiler, mpi, cray_compilers):
 
     # finally, get mpi compilers if this is a cray machine (highest priority)
     if cray_compilers:
-        mpi_compiler = mpi_compilers['cray']
+        mpi_compiler = mpi_compilers["cray"]
 
     if mpi_compiler is None:
-        raise ValueError(f"Couldn't figure out MPI compilers for {machine} "
-                         f"{compiler} {mpi}")
+        raise ValueError(
+            f"Couldn't figure out MPI compilers for {machine} {compiler} {mpi}"
+        )
 
-    return mpi_compiler['mpicc'], mpi_compiler['mpicxx'], mpi_compiler['mpifc']
+    return mpi_compiler["mpicc"], mpi_compiler["mpicxx"], mpi_compiler["mpifc"]
