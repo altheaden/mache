@@ -98,54 +98,56 @@
     <span class="n">hostname</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
     <span class="n">machine</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">machines_by_host_re</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="sa">r</span><span class="s1">&#39;^acme1&#39;</span><span class="p">:</span> <span class="s1">&#39;acme1&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^andes&#39;</span><span class="p">:</span> <span class="s1">&#39;andes&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^blueslogin&#39;</span><span class="p">:</span> <span class="s1">&#39;anvil&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^b\d</span><span class="si">{3}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;anvil&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^ch-fe&#39;</span><span class="p">:</span> <span class="s1">&#39;chicoma-cpu&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^chrlogin&#39;</span><span class="p">:</span> <span class="s1">&#39;chrysalis&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^chr-\d</span><span class="si">{4}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;chrysalis&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^compy&#39;</span><span class="p">:</span> <span class="s1">&#39;compy&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^n\d</span><span class="si">{4}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="s1">&#39;anvil&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^cooley&#39;</span><span class="p">:</span> <span class="s1">&#39;cooley&#39;</span><span class="p">,</span>
-        <span class="sa">r</span><span class="s1">&#39;^polaris&#39;</span><span class="p">:</span> <span class="s1">&#39;polaris&#39;</span>
+        <span class="sa">r</span><span class="s2">&quot;^acme1&quot;</span><span class="p">:</span> <span class="s2">&quot;acme1&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^andes&quot;</span><span class="p">:</span> <span class="s2">&quot;andes&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^blueslogin&quot;</span><span class="p">:</span> <span class="s2">&quot;anvil&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^b\d</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;anvil&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^ch-fe&quot;</span><span class="p">:</span> <span class="s2">&quot;chicoma-cpu&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^chrlogin&quot;</span><span class="p">:</span> <span class="s2">&quot;chrysalis&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^chr-\d</span><span class="si">{4}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;chrysalis&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^compy&quot;</span><span class="p">:</span> <span class="s2">&quot;compy&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^n\d</span><span class="si">{4}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;anvil&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^cooley&quot;</span><span class="p">:</span> <span class="s2">&quot;cooley&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^polaris&quot;</span><span class="p">:</span> <span class="s2">&quot;polaris&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^dane\d{1,4}&quot;</span><span class="p">:</span> <span class="s2">&quot;dane&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;^ruby\d{1,4}&quot;</span><span class="p">:</span> <span class="s2">&quot;ruby&quot;</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">for</span> <span class="n">host_re</span><span class="p">,</span> <span class="n">mach</span> <span class="ow">in</span> <span class="n">machines_by_host_re</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">host_re</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">hostname</span><span class="p">):</span>
             <span class="n">machine</span> <span class="o">=</span> <span class="n">mach</span>
             <span class="k">break</span>
-    <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;LMOD_SYSTEM_NAME&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-        <span class="n">hostname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LMOD_SYSTEM_NAME&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">hostname</span> <span class="o">==</span> <span class="s1">&#39;frontier&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;LMOD_SYSTEM_NAME&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">hostname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LMOD_SYSTEM_NAME&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">hostname</span> <span class="o">==</span> <span class="s2">&quot;frontier&quot;</span><span class="p">:</span>
             <span class="c1"># frontier&#39;s hostname is too generic to detect, so relying on</span>
             <span class="c1"># LMOD_SYSTEM_NAME</span>
-            <span class="n">machine</span> <span class="o">=</span> <span class="s1">&#39;frontier&#39;</span>
-    <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;NERSC_HOST&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-        <span class="n">hostname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;NERSC_HOST&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">hostname</span> <span class="o">==</span> <span class="s1">&#39;perlmutter&#39;</span><span class="p">:</span>
+            <span class="n">machine</span> <span class="o">=</span> <span class="s2">&quot;frontier&quot;</span>
+    <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;NERSC_HOST&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">hostname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;NERSC_HOST&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">hostname</span> <span class="o">==</span> <span class="s2">&quot;perlmutter&quot;</span><span class="p">:</span>
             <span class="c1"># perlmutter&#39;s hostname is too generic to detect, so relying on</span>
             <span class="c1"># $NERSC_HOST</span>
-            <span class="n">machine</span> <span class="o">=</span> <span class="s1">&#39;pm-cpu&#39;</span>
-        <span class="k">elif</span> <span class="n">hostname</span> <span class="o">==</span> <span class="s1">&#39;unknown&#39;</span><span class="p">:</span>
+            <span class="n">machine</span> <span class="o">=</span> <span class="s2">&quot;pm-cpu&quot;</span>
+        <span class="k">elif</span> <span class="n">hostname</span> <span class="o">==</span> <span class="s2">&quot;unknown&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;You appear to have $NERSC_HOST=unknown.  This typically &#39;</span>
-                <span class="s1">&#39;indicates that you </span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;have an outdated .bash_profile.ext or similar.  Please &#39;</span>
-                <span class="s1">&#39;either delete or </span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;edit that file so it no longer defines $NERSC_HOST, log out, &#39;</span>
-                <span class="s1">&#39;log back in, </span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;and try again.&#39;</span><span class="p">)</span>
+                <span class="s2">&quot;You appear to have $NERSC_HOST=unknown.  This typically &quot;</span>
+                <span class="s2">&quot;indicates that you </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;have an outdated .bash_profile.ext or similar.  Please &quot;</span>
+                <span class="s2">&quot;either delete or </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;edit that file so it no longer defines $NERSC_HOST, log out, &quot;</span>
+                <span class="s2">&quot;log back in, </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;and try again.&quot;</span>
+            <span class="p">)</span>
 
     <span class="c1"># As a last resort (e.g. on a compute node), try getting the machine from</span>
     <span class="c1"># a file created on install</span>
-    <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;CONDA_PREFIX&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CONDA_PREFIX&#39;</span><span class="p">]</span>
-        <span class="n">machine_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">prefix</span><span class="p">,</span> <span class="s1">&#39;share&#39;</span><span class="p">,</span> <span class="s1">&#39;mache&#39;</span><span class="p">,</span> <span class="s1">&#39;machine.txt&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;CONDA_PREFIX&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CONDA_PREFIX&quot;</span><span class="p">]</span>
+        <span class="n">machine_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="s2">&quot;share&quot;</span><span class="p">,</span> <span class="s2">&quot;mache&quot;</span><span class="p">,</span> <span class="s2">&quot;machine.txt&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">machine_filename</span><span class="p">):</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">machine_filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-                <span class="n">machine</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">machine</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">machine</span></div>
 

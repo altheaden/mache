@@ -157,7 +157,7 @@
         <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">machine</span> <span class="o">=</span> <span class="n">discover_machine</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unable to discover machine from host name&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to discover machine from host name&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">machine</span> <span class="o">=</span> <span class="n">machine</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_config</span><span class="p">()</span>
@@ -180,9 +180,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">web_portal_url</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwuid</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getuid</span><span class="p">())</span><span class="o">.</span><span class="n">pw_name</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">has_section</span><span class="p">(</span><span class="s1">&#39;web_portal&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s1">&#39;web_portal&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;web_portal&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">has_section</span><span class="p">(</span><span class="s2">&quot;web_portal&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;web_portal&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;web_portal&quot;</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -195,70 +195,57 @@
 <span class="sd">            The contents as a string for printing to the terminal</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">info</span> <span class="o">=</span> \
-            <span class="sa">f</span><span class="s1">&#39;Machine: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-            <span class="sa">f</span><span class="s1">&#39;  E3SM Supported Machine: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e3sm_supported</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Machine: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="si">}</span><span class="se">\n</span><span class="s2">  E3SM Supported Machine: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e3sm_supported</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_supported</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">compilers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">mpilibs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">os</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">info</span> <span class="o">=</span> \
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                <span class="sa">f</span><span class="s1">&#39;  Compilers: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compilers</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                <span class="sa">f</span><span class="s1">&#39;  MPI libraries: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mpilibs</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                <span class="sa">f</span><span class="s1">&#39;  OS: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">os</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_supported</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">compilers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">mpilibs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">os</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  Compilers: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compilers</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  MPI libraries: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mpilibs</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  OS: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">os</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
-        <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-        <span class="n">print_unified</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_activation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_mpi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">print_unified</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_activation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_mpi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">print_unified</span><span class="p">:</span>
-            <span class="n">info</span> <span class="o">=</span> \
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                <span class="sa">f</span><span class="s1">&#39;E3SM-Unified: &#39;</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">E3SM-Unified: &quot;</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_activation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">info</span> <span class="o">=</span> \
-                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                    <span class="sa">f</span><span class="s1">&#39;  E3SM-Unified is not currently loaded&#39;</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">  E3SM-Unified is not currently loaded&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">info</span> <span class="o">=</span> \
-                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                    <span class="sa">f</span><span class="s1">&#39;  Activation: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_activation</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">  Activation: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_activation</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">info</span> <span class="o">=</span> \
-                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                    <span class="sa">f</span><span class="s1">&#39;  Base path: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_base</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">  Base path: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_base</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_mpi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">info</span> <span class="o">=</span> \
-                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                    <span class="sa">f</span><span class="s1">&#39;  MPI type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_mpi</span><span class="si">}</span><span class="s1">&#39;</span>
-            <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">  MPI type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_mpi</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="n">print_diags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagnostics_base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">print_diags</span><span class="p">:</span>
-            <span class="n">info</span> <span class="o">=</span> \
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                <span class="sa">f</span><span class="s1">&#39;Diagnostics: &#39;</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">Diagnostics: &quot;</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagnostics_base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">info</span> <span class="o">=</span> \
-                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                    <span class="sa">f</span><span class="s1">&#39;  Base path: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">diagnostics_base</span><span class="si">}</span><span class="s1">&#39;</span>
-            <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">  Base path: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">diagnostics_base</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-        <span class="n">info</span> <span class="o">=</span> \
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-            <span class="sa">f</span><span class="s1">&#39;Config options: &#39;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">Config options: &quot;</span>
         <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">sections</span><span class="p">():</span>
-            <span class="n">info</span> <span class="o">=</span> \
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                <span class="sa">f</span><span class="s1">&#39;  [</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s1">]&#39;</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">  [</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">]&quot;</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">section</span><span class="p">):</span>
-                <span class="n">info</span> <span class="o">=</span> \
-                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-                    <span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span>
-            <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">    </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">info</span>
 
 <div class="viewcode-block" id="MachineInfo.get_account_defaults">
@@ -286,29 +273,29 @@
 <span class="sd">            QOS should be specified</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;account&#39;</span><span class="p">):</span>
-            <span class="n">account</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;account&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;account&quot;</span><span class="p">):</span>
+            <span class="n">account</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;account&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">account</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;partitions&#39;</span><span class="p">):</span>
-            <span class="n">partition</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;partitions&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;partitions&quot;</span><span class="p">):</span>
+            <span class="n">partition</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;partitions&quot;</span><span class="p">)</span>
             <span class="c1"># take the first entry</span>
-            <span class="n">partition</span> <span class="o">=</span> <span class="n">partition</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">partition</span> <span class="o">=</span> <span class="n">partition</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">partition</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;constraints&#39;</span><span class="p">):</span>
-            <span class="n">constraint</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;constraints&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;constraints&quot;</span><span class="p">):</span>
+            <span class="n">constraint</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;constraints&quot;</span><span class="p">)</span>
             <span class="c1"># take the first entry</span>
-            <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">constraint</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">constraint</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;qos&#39;</span><span class="p">):</span>
-            <span class="n">qos</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;qos&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;qos&quot;</span><span class="p">):</span>
+            <span class="n">qos</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parallel&quot;</span><span class="p">,</span> <span class="s2">&quot;qos&quot;</span><span class="p">)</span>
             <span class="c1"># take the first entry</span>
-            <span class="n">qos</span> <span class="o">=</span> <span class="n">qos</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">qos</span> <span class="o">=</span> <span class="n">qos</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">qos</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -316,39 +303,40 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; get a parser for config options &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;get a parser for config options&quot;&quot;&quot;</span>
 
         <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span>
-            <span class="n">interpolation</span><span class="o">=</span><span class="n">configparser</span><span class="o">.</span><span class="n">ExtendedInterpolation</span><span class="p">())</span>
+            <span class="n">interpolation</span><span class="o">=</span><span class="n">configparser</span><span class="o">.</span><span class="n">ExtendedInterpolation</span><span class="p">()</span>
+        <span class="p">)</span>
 
         <span class="n">machine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cfg_path</span> <span class="o">=</span> \
-                <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;mache.machines&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s1">.cfg&#39;</span>
+            <span class="n">cfg_path</span> <span class="o">=</span> <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;mache.machines&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">.cfg&quot;</span>
             <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cfg_path</span><span class="p">))</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="c1"># this isn&#39;t a known machine so use the default</span>
-            <span class="n">cfg_path</span> <span class="o">=</span> \
-                <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;mache.machines&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;default.cfg&#39;</span>
+            <span class="n">cfg_path</span> <span class="o">=</span> <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;mache.machines&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;default.cfg&quot;</span>
             <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cfg_path</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">config</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_compilers_and_mpi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Parse the compilers and mpi modules from XML config files &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the compilers and mpi modules from XML config files&quot;&quot;&quot;</span>
         <span class="n">machine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span>
 
-        <span class="n">xml_path</span> <span class="o">=</span> <span class="p">(</span><span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;mache.cime_machine_config&#39;</span><span class="p">)</span> <span class="o">/</span>
-                    <span class="s1">&#39;config_machines.xml&#39;</span><span class="p">)</span>
+        <span class="n">xml_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;mache.cime_machine_config&quot;</span><span class="p">)</span>
+            <span class="o">/</span> <span class="s2">&quot;config_machines.xml&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">root</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">xml_path</span><span class="p">))</span>
 
-        <span class="n">machines</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="s1">&#39;config_machines&#39;</span><span class="p">))</span>
+        <span class="n">machines</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="s2">&quot;config_machines&quot;</span><span class="p">))</span>
 
         <span class="n">mach</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">mach</span> <span class="ow">in</span> <span class="n">machines</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">mach</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;machine&#39;</span> <span class="ow">and</span> <span class="n">mach</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;MACH&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">machine</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mach</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;machine&quot;</span> <span class="ow">and</span> <span class="n">mach</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;MACH&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">machine</span><span class="p">:</span>
                 <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">break</span>
 
@@ -360,50 +348,48 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_supported</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">compilers</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">mach</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;COMPILERS&#39;</span><span class="p">:</span>
-                <span class="n">compilers</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;COMPILERS&quot;</span><span class="p">:</span>
+                <span class="n">compilers</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
                 <span class="k">break</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">compilers</span> <span class="o">=</span> <span class="n">compilers</span>
 
         <span class="n">mpilibs</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">mach</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;MPILIBS&#39;</span><span class="p">:</span>
-                <span class="n">mpilibs</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;MPILIBS&quot;</span><span class="p">:</span>
+                <span class="n">mpilibs</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
                 <span class="k">break</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">mpilibs</span> <span class="o">=</span> <span class="n">mpilibs</span>
 
         <span class="n">machine_os</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">mach</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;OS&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;OS&quot;</span><span class="p">:</span>
                 <span class="n">machine_os</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span>
                 <span class="k">break</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">os</span> <span class="o">=</span> <span class="n">machine_os</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_detect_e3sm_unified</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Read E3SM-Unified base path and detect whether it is running &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read E3SM-Unified base path and detect whether it is running&quot;&quot;&quot;</span>
         <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
 
-        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> \
-                <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;e3sm_unified&#39;</span><span class="p">,</span> <span class="s1">&#39;base_path&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_base</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;e3sm_unified&#39;</span><span class="p">,</span> <span class="s1">&#39;base_path&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s2">&quot;e3sm_unified&quot;</span><span class="p">,</span> <span class="s2">&quot;base_path&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_base</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;e3sm_unified&quot;</span><span class="p">,</span> <span class="s2">&quot;base_path&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="s1">&#39;E3SMU_SCRIPT&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_activation</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;E3SMU_SCRIPT&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;E3SMU_SCRIPT&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_activation</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;E3SMU_SCRIPT&quot;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="s1">&#39;E3SMU_MPI&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_mpi</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;E3SMU_MPI&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;E3SMU_MPI&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e3sm_unified_mpi</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;E3SMU_MPI&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_diagnostics_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get config options related to diagnostics data &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get config options related to diagnostics data&quot;&quot;&quot;</span>
 
         <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
 
-        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> \
-                <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;diagnostics&#39;</span><span class="p">,</span> <span class="s1">&#39;base_path&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">diagnostics_base</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;diagnostics&#39;</span><span class="p">,</span> <span class="s1">&#39;base_path&#39;</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s2">&quot;diagnostics&quot;</span><span class="p">,</span> <span class="s2">&quot;base_path&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diagnostics_base</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;diagnostics&quot;</span><span class="p">,</span> <span class="s2">&quot;base_path&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 

@@ -76,9 +76,7 @@
   <h1>Source code for mache.spack</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">resources</span> <span class="k">as</span> <span class="n">importlib_resources</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">jinja2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Template</span>
@@ -89,11 +87,21 @@
 
 <div class="viewcode-block" id="make_spack_env">
 <a class="viewcode-back" href="../../developers_guide/generated/mache.spack.make_spack_env.html#mache.spack.make_spack_env">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_spack_env</span><span class="p">(</span><span class="n">spack_path</span><span class="p">,</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">spack_specs</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span>
-                   <span class="n">machine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_e3sm_lapack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                   <span class="n">include_e3sm_hdf5_netcdf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                   <span class="n">yaml_template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmpdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spack_mirror</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                   <span class="n">custom_spack</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_spack_env</span><span class="p">(</span>
+    <span class="n">spack_path</span><span class="p">,</span>
+    <span class="n">env_name</span><span class="p">,</span>
+    <span class="n">spack_specs</span><span class="p">,</span>
+    <span class="n">compiler</span><span class="p">,</span>
+    <span class="n">mpi</span><span class="p">,</span>
+    <span class="n">machine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_e3sm_lapack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">include_e3sm_hdf5_netcdf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">yaml_template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tmpdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">spack_mirror</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">custom_spack</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Clone the ``spack_for_mache_{{version}}`` branch from</span>
 <span class="sd">    `E3SM&#39;s spack clone &lt;https://github.com/E3SM-Project/spack&gt;`_ and build</span>
@@ -151,7 +159,7 @@
     <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">machine</span> <span class="o">=</span> <span class="n">discover_machine</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unable to discover machine form host name&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to discover machine form host name&quot;</span><span class="p">)</span>
 
     <span class="n">machine_info</span> <span class="o">=</span> <span class="n">MachineInfo</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
 
@@ -159,35 +167,38 @@
     <span class="k">if</span> <span class="n">config_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
 
-    <span class="n">section</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spack&#39;</span><span class="p">]</span>
+    <span class="n">section</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;spack&quot;</span><span class="p">]</span>
 
-    <span class="n">with_modules</span> <span class="o">=</span> <span class="p">(</span><span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;modules_before&#39;</span><span class="p">)</span> <span class="ow">or</span>
-                    <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;modules_after&#39;</span><span class="p">))</span>
+    <span class="n">with_modules</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s2">&quot;modules_before&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span>
+        <span class="s2">&quot;modules_after&quot;</span>
+    <span class="p">)</span>
 
     <span class="c1"># add the package specs to the appropriate template</span>
-    <span class="n">specs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;  - </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">spack_specs</span><span class="p">])</span>  <span class="c1"># noqa: E221</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">spack_specs</span><span class="p">])</span>  <span class="c1"># noqa: E221</span>
 
-    <span class="n">yaml_data</span> <span class="o">=</span> <span class="n">_get_yaml_data</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">include_e3sm_lapack</span><span class="p">,</span>
-                               <span class="n">include_e3sm_hdf5_netcdf</span><span class="p">,</span> <span class="n">specs</span><span class="p">,</span>
-                               <span class="n">yaml_template</span><span class="p">)</span>
+    <span class="n">yaml_data</span> <span class="o">=</span> <span class="n">_get_yaml_data</span><span class="p">(</span>
+        <span class="n">machine</span><span class="p">,</span>
+        <span class="n">compiler</span><span class="p">,</span>
+        <span class="n">mpi</span><span class="p">,</span>
+        <span class="n">include_e3sm_lapack</span><span class="p">,</span>
+        <span class="n">include_e3sm_hdf5_netcdf</span><span class="p">,</span>
+        <span class="n">specs</span><span class="p">,</span>
+        <span class="n">yaml_template</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="n">yaml_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s1">.yaml&#39;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+    <span class="n">yaml_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">.yaml&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
         <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">yaml_data</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">with_modules</span><span class="p">:</span>
         <span class="n">mods</span> <span class="o">=</span> <span class="n">_get_modules</span><span class="p">(</span><span class="n">yaml_data</span><span class="p">)</span>
-        <span class="n">modules</span> <span class="o">=</span> \
-            <span class="sa">f</span><span class="s1">&#39;module purge</span><span class="se">\n</span><span class="s1">&#39;</span> \
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mods</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;module purge</span><span class="se">\n</span><span class="si">{</span><span class="n">mods</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">modules</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-    <span class="k">for</span> <span class="n">shell_filename</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s1">.sh&#39;</span><span class="p">,</span>
-                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s1">.sh&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">shell_filename</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">.sh&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s2">.sh&quot;</span><span class="p">]:</span>
         <span class="c1"># load modules, etc. for this machine</span>
-        <span class="n">path</span> <span class="o">=</span> \
-            <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;mache.spack&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">shell_filename</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;mache.spack&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">shell_filename</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
@@ -195,45 +206,54 @@
             <span class="c1"># there&#39;s nothing to add, which is fine</span>
             <span class="k">continue</span>
         <span class="n">bash_script</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
-            <span class="n">e3sm_lapack</span><span class="o">=</span><span class="n">include_e3sm_lapack</span><span class="p">,</span>
-            <span class="n">e3sm_hdf5_netcdf</span><span class="o">=</span><span class="n">include_e3sm_hdf5_netcdf</span><span class="p">)</span>
+            <span class="n">e3sm_lapack</span><span class="o">=</span><span class="n">include_e3sm_lapack</span><span class="p">,</span> <span class="n">e3sm_hdf5_netcdf</span><span class="o">=</span><span class="n">include_e3sm_hdf5_netcdf</span>
+        <span class="p">)</span>
 
-        <span class="n">modules</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">modules</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">bash_script</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">modules</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">bash_script</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="n">path</span> <span class="o">=</span> \
-        <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;mache.spack&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;build_spack_env.template&#39;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;mache.spack&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;build_spack_env.template&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
         <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">tmpdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">modules</span> <span class="o">=</span> \
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">modules</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-            <span class="sa">f</span><span class="s1">&#39;export TMPDIR=</span><span class="si">{</span><span class="n">tmpdir</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">modules</span><span class="si">}</span><span class="se">\n</span><span class="s2">export TMPDIR=</span><span class="si">{</span><span class="n">tmpdir</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="n">template_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">modules</span><span class="o">=</span><span class="n">modules</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span>
-                         <span class="n">spack_path</span><span class="o">=</span><span class="n">spack_path</span><span class="p">,</span> <span class="n">env_name</span><span class="o">=</span><span class="n">env_name</span><span class="p">,</span>
-                         <span class="n">yaml_filename</span><span class="o">=</span><span class="n">yaml_filename</span><span class="p">,</span>
-                         <span class="n">custom_spack</span><span class="o">=</span><span class="n">custom_spack</span><span class="p">)</span>
+    <span class="n">template_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">modules</span><span class="o">=</span><span class="n">modules</span><span class="p">,</span>
+        <span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span>
+        <span class="n">spack_path</span><span class="o">=</span><span class="n">spack_path</span><span class="p">,</span>
+        <span class="n">env_name</span><span class="o">=</span><span class="n">env_name</span><span class="p">,</span>
+        <span class="n">yaml_filename</span><span class="o">=</span><span class="n">yaml_filename</span><span class="p">,</span>
+        <span class="n">custom_spack</span><span class="o">=</span><span class="n">custom_spack</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">spack_mirror</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">template_args</span><span class="p">[</span><span class="s1">&#39;spack_mirror&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spack_mirror</span>
+        <span class="n">template_args</span><span class="p">[</span><span class="s2">&quot;spack_mirror&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spack_mirror</span>
 
     <span class="n">build_file</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">template_args</span><span class="p">)</span>
-    <span class="n">build_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;build_</span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s1">.bash&#39;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">build_filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+    <span class="n">build_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;build_</span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">.bash&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">build_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
         <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">build_file</span><span class="p">)</span>
 
     <span class="c1"># clear environment variables and start fresh with those from login</span>
     <span class="c1"># so spack doesn&#39;t get confused by conda</span>
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;env -i bash -l </span><span class="si">{</span><span class="n">build_filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;env -i bash -l </span><span class="si">{</span><span class="n">build_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="get_spack_script">
 <a class="viewcode-back" href="../../developers_guide/generated/mache.spack.get_spack_script.html#mache.spack.get_spack_script">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_spack_script</span><span class="p">(</span><span class="n">spack_path</span><span class="p">,</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">shell</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                     <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_e3sm_lapack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                     <span class="n">include_e3sm_hdf5_netcdf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                     <span class="n">yaml_template</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spack_script</span><span class="p">(</span>
+    <span class="n">spack_path</span><span class="p">,</span>
+    <span class="n">env_name</span><span class="p">,</span>
+    <span class="n">compiler</span><span class="p">,</span>
+    <span class="n">mpi</span><span class="p">,</span>
+    <span class="n">shell</span><span class="p">,</span>
+    <span class="n">machine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_e3sm_lapack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">include_e3sm_hdf5_netcdf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">yaml_template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build a snippet of a load script for the given spack environment</span>
 
@@ -286,7 +306,7 @@
     <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">machine</span> <span class="o">=</span> <span class="n">discover_machine</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unable to discover machine form host name&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to discover machine form host name&quot;</span><span class="p">)</span>
 
     <span class="n">machine_info</span> <span class="o">=</span> <span class="n">MachineInfo</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
 
@@ -294,33 +314,38 @@
     <span class="k">if</span> <span class="n">config_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
 
-    <span class="n">section</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spack&#39;</span><span class="p">]</span>
+    <span class="n">section</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;spack&quot;</span><span class="p">]</span>
 
-    <span class="n">modules_before</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;modules_before&#39;</span><span class="p">)</span>
-    <span class="n">modules_after</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;modules_after&#39;</span><span class="p">)</span>
+    <span class="n">modules_before</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s2">&quot;modules_before&quot;</span><span class="p">)</span>
+    <span class="n">modules_after</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s2">&quot;modules_after&quot;</span><span class="p">)</span>
 
     <span class="n">yaml_data</span> <span class="o">=</span> <span class="n">_get_yaml_data</span><span class="p">(</span>
-        <span class="n">machine</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">include_e3sm_lapack</span><span class="p">,</span> <span class="n">include_e3sm_hdf5_netcdf</span><span class="p">,</span>
-        <span class="n">specs</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">yaml_template</span><span class="o">=</span><span class="n">yaml_template</span><span class="p">)</span>
+        <span class="n">machine</span><span class="p">,</span>
+        <span class="n">compiler</span><span class="p">,</span>
+        <span class="n">mpi</span><span class="p">,</span>
+        <span class="n">include_e3sm_lapack</span><span class="p">,</span>
+        <span class="n">include_e3sm_hdf5_netcdf</span><span class="p">,</span>
+        <span class="n">specs</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">yaml_template</span><span class="o">=</span><span class="n">yaml_template</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">modules_before</span> <span class="ow">or</span> <span class="n">modules_after</span><span class="p">:</span>
-        <span class="n">load_script</span> <span class="o">=</span> <span class="s1">&#39;module purge</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">load_script</span> <span class="o">=</span> <span class="s2">&quot;module purge</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">modules_before</span><span class="p">:</span>
             <span class="n">mods</span> <span class="o">=</span> <span class="n">_get_modules</span><span class="p">(</span><span class="n">yaml_data</span><span class="p">)</span>
-            <span class="n">load_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">load_script</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">mods</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="n">load_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">load_script</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">mods</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">load_script</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">load_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-    <span class="n">load_script</span> <span class="o">=</span> \
-        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">load_script</span><span class="si">}</span><span class="s1">&#39;</span> \
-        <span class="sa">f</span><span class="s1">&#39;source </span><span class="si">{</span><span class="n">spack_path</span><span class="si">}</span><span class="s1">/share/spack/setup-env.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> \
-        <span class="sa">f</span><span class="s1">&#39;spack env activate </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">load_script</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">load_script</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;source </span><span class="si">{</span><span class="n">spack_path</span><span class="si">}</span><span class="s2">/share/spack/setup-env.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;spack env activate </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">shell_filename</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">shell_filename</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]:</span>
         <span class="c1"># load modules, etc. for this machine</span>
-        <span class="n">path</span> <span class="o">=</span> \
-            <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;mache.spack&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">shell_filename</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;mache.spack&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">shell_filename</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
@@ -328,13 +353,13 @@
             <span class="c1"># there&#39;s nothing to add, which is fine</span>
             <span class="k">continue</span>
         <span class="n">shell_script</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
-            <span class="n">e3sm_lapack</span><span class="o">=</span><span class="n">include_e3sm_lapack</span><span class="p">,</span>
-            <span class="n">e3sm_hdf5_netcdf</span><span class="o">=</span><span class="n">include_e3sm_hdf5_netcdf</span><span class="p">)</span>
-        <span class="n">load_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">load_script</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">shell_script</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">e3sm_lapack</span><span class="o">=</span><span class="n">include_e3sm_lapack</span><span class="p">,</span> <span class="n">e3sm_hdf5_netcdf</span><span class="o">=</span><span class="n">include_e3sm_hdf5_netcdf</span>
+        <span class="p">)</span>
+        <span class="n">load_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">load_script</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">shell_script</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">if</span> <span class="n">modules_after</span><span class="p">:</span>
         <span class="n">mods</span> <span class="o">=</span> <span class="n">_get_modules</span><span class="p">(</span><span class="n">yaml_data</span><span class="p">)</span>
-        <span class="n">load_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">load_script</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">mods</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">load_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">load_script</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">mods</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">return</span> <span class="n">load_script</span></div>
 
@@ -342,10 +367,15 @@
 
 <div class="viewcode-block" id="get_modules_env_vars_and_mpi_compilers">
 <a class="viewcode-back" href="../../developers_guide/generated/mache.spack.get_modules_env_vars_and_mpi_compilers.html#mache.spack.get_modules_env_vars_and_mpi_compilers">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_modules_env_vars_and_mpi_compilers</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">shell</span><span class="p">,</span>
-                                           <span class="n">include_e3sm_lapack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                           <span class="n">include_e3sm_hdf5_netcdf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                           <span class="n">yaml_template</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_modules_env_vars_and_mpi_compilers</span><span class="p">(</span>
+    <span class="n">machine</span><span class="p">,</span>
+    <span class="n">compiler</span><span class="p">,</span>
+    <span class="n">mpi</span><span class="p">,</span>
+    <span class="n">shell</span><span class="p">,</span>
+    <span class="n">include_e3sm_lapack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">include_e3sm_hdf5_netcdf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">yaml_template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the non-spack modules, environment variables and compiler names for a</span>
 <span class="sd">    given machine, compiler and MPI library.</span>
@@ -397,35 +427,39 @@
     <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">machine</span> <span class="o">=</span> <span class="n">discover_machine</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">machine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unable to discover machine form host name&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to discover machine form host name&quot;</span><span class="p">)</span>
 
     <span class="n">machine_info</span> <span class="o">=</span> <span class="n">MachineInfo</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
 
     <span class="n">config</span> <span class="o">=</span> <span class="n">machine_info</span><span class="o">.</span><span class="n">config</span>
     <span class="n">cray_compilers</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_section</span><span class="p">(</span><span class="s1">&#39;spack&#39;</span><span class="p">):</span>
-        <span class="n">section</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spack&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_section</span><span class="p">(</span><span class="s2">&quot;spack&quot;</span><span class="p">):</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;spack&quot;</span><span class="p">]</span>
 
-        <span class="n">with_modules</span> <span class="o">=</span> <span class="p">(</span><span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;modules_before&#39;</span><span class="p">)</span> <span class="ow">or</span>
-                        <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;modules_after&#39;</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s1">&#39;spack&#39;</span><span class="p">,</span> <span class="s1">&#39;cray_compilers&#39;</span><span class="p">):</span>
-            <span class="n">cray_compilers</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s1">&#39;cray_compilers&#39;</span><span class="p">)</span>
+        <span class="n">with_modules</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s2">&quot;modules_before&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span>
+            <span class="s2">&quot;modules_after&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s2">&quot;spack&quot;</span><span class="p">,</span> <span class="s2">&quot;cray_compilers&quot;</span><span class="p">):</span>
+            <span class="n">cray_compilers</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s2">&quot;cray_compilers&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">with_modules</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="n">mod_env_commands</span> <span class="o">=</span> <span class="s1">&#39;module purge</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">mod_env_commands</span> <span class="o">=</span> <span class="s2">&quot;module purge</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="k">if</span> <span class="n">with_modules</span><span class="p">:</span>
         <span class="n">yaml_data</span> <span class="o">=</span> <span class="n">_get_yaml_data</span><span class="p">(</span>
-            <span class="n">machine</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">include_e3sm_lapack</span><span class="p">,</span>
-            <span class="n">include_e3sm_hdf5_netcdf</span><span class="p">,</span> <span class="n">specs</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
-            <span class="n">yaml_template</span><span class="o">=</span><span class="n">yaml_template</span><span class="p">)</span>
+            <span class="n">machine</span><span class="p">,</span>
+            <span class="n">compiler</span><span class="p">,</span>
+            <span class="n">mpi</span><span class="p">,</span>
+            <span class="n">include_e3sm_lapack</span><span class="p">,</span>
+            <span class="n">include_e3sm_hdf5_netcdf</span><span class="p">,</span>
+            <span class="n">specs</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">yaml_template</span><span class="o">=</span><span class="n">yaml_template</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">mods</span> <span class="o">=</span> <span class="n">_get_modules</span><span class="p">(</span><span class="n">yaml_data</span><span class="p">)</span>
-        <span class="n">mod_env_commands</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mod_env_commands</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">mods</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">mod_env_commands</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mod_env_commands</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">mods</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-    <span class="k">for</span> <span class="n">shell_filename</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]:</span>
-        <span class="n">path</span> <span class="o">=</span> \
-            <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;mache.spack&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">shell_filename</span>
+    <span class="k">for</span> <span class="n">shell_filename</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;mache.spack&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">shell_filename</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
@@ -433,74 +467,75 @@
             <span class="c1"># there&#39;s nothing to add, which is fine</span>
             <span class="k">continue</span>
         <span class="n">shell_script</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
-            <span class="n">e3sm_lapack</span><span class="o">=</span><span class="n">include_e3sm_lapack</span><span class="p">,</span>
-            <span class="n">e3sm_hdf5_netcdf</span><span class="o">=</span><span class="n">include_e3sm_hdf5_netcdf</span><span class="p">)</span>
-        <span class="n">mod_env_commands</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mod_env_commands</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">shell_script</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">e3sm_lapack</span><span class="o">=</span><span class="n">include_e3sm_lapack</span><span class="p">,</span> <span class="n">e3sm_hdf5_netcdf</span><span class="o">=</span><span class="n">include_e3sm_hdf5_netcdf</span>
+        <span class="p">)</span>
+        <span class="n">mod_env_commands</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mod_env_commands</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">shell_script</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="n">mpicc</span><span class="p">,</span> <span class="n">mpicxx</span><span class="p">,</span> <span class="n">mpifc</span> <span class="o">=</span> <span class="n">_get_mpi_compilers</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span>
-                                              <span class="n">cray_compilers</span><span class="p">)</span>
+    <span class="n">mpicc</span><span class="p">,</span> <span class="n">mpicxx</span><span class="p">,</span> <span class="n">mpifc</span> <span class="o">=</span> <span class="n">_get_mpi_compilers</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">cray_compilers</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">mpicc</span><span class="p">,</span> <span class="n">mpicxx</span><span class="p">,</span> <span class="n">mpifc</span><span class="p">,</span> <span class="n">mod_env_commands</span></div>
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_get_yaml_data</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">include_e3sm_lapack</span><span class="p">,</span>
-                   <span class="n">include_e3sm_hdf5_netcdf</span><span class="p">,</span> <span class="n">specs</span><span class="p">,</span>
-                   <span class="n">yaml_template</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Get the data from the jinja-templated yaml file based on settings &quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_yaml_data</span><span class="p">(</span>
+    <span class="n">machine</span><span class="p">,</span>
+    <span class="n">compiler</span><span class="p">,</span>
+    <span class="n">mpi</span><span class="p">,</span>
+    <span class="n">include_e3sm_lapack</span><span class="p">,</span>
+    <span class="n">include_e3sm_hdf5_netcdf</span><span class="p">,</span>
+    <span class="n">specs</span><span class="p">,</span>
+    <span class="n">yaml_template</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the data from the jinja-templated yaml file based on settings&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">yaml_template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">template_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s1">.yaml&#39;</span>
-        <span class="n">path</span> <span class="o">=</span> \
-            <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;mache.spack&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">template_filename</span>
+        <span class="n">template_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s2">.yaml&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;mache.spack&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">template_filename</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Spack template not available for </span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s1"> &#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39;and </span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s1"> on </span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Spack template not available for </span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_template</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
-    <span class="n">yaml_data</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">specs</span><span class="o">=</span><span class="n">specs</span><span class="p">,</span>
-                                <span class="n">e3sm_lapack</span><span class="o">=</span><span class="n">include_e3sm_lapack</span><span class="p">,</span>
-                                <span class="n">e3sm_hdf5_netcdf</span><span class="o">=</span><span class="n">include_e3sm_hdf5_netcdf</span><span class="p">)</span>
+    <span class="n">yaml_data</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+        <span class="n">specs</span><span class="o">=</span><span class="n">specs</span><span class="p">,</span>
+        <span class="n">e3sm_lapack</span><span class="o">=</span><span class="n">include_e3sm_lapack</span><span class="p">,</span>
+        <span class="n">e3sm_hdf5_netcdf</span><span class="o">=</span><span class="n">include_e3sm_hdf5_netcdf</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">yaml_data</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_modules</span><span class="p">(</span><span class="n">yaml_string</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Get a list of modules from a yaml file &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a list of modules from a yaml file&quot;&quot;&quot;</span>
     <span class="n">yaml_data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_string</span><span class="p">)</span>
     <span class="n">mods</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="s1">&#39;spack&#39;</span> <span class="ow">in</span> <span class="n">yaml_data</span> <span class="ow">and</span> <span class="s1">&#39;packages&#39;</span> <span class="ow">in</span> <span class="n">yaml_data</span><span class="p">[</span><span class="s1">&#39;spack&#39;</span><span class="p">]:</span>
-        <span class="n">package_data</span> <span class="o">=</span> <span class="n">yaml_data</span><span class="p">[</span><span class="s1">&#39;spack&#39;</span><span class="p">][</span><span class="s1">&#39;packages&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">&quot;spack&quot;</span> <span class="ow">in</span> <span class="n">yaml_data</span> <span class="ow">and</span> <span class="s2">&quot;packages&quot;</span> <span class="ow">in</span> <span class="n">yaml_data</span><span class="p">[</span><span class="s2">&quot;spack&quot;</span><span class="p">]:</span>
+        <span class="n">package_data</span> <span class="o">=</span> <span class="n">yaml_data</span><span class="p">[</span><span class="s2">&quot;spack&quot;</span><span class="p">][</span><span class="s2">&quot;packages&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">package</span> <span class="ow">in</span> <span class="n">package_data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="s1">&#39;externals&#39;</span> <span class="ow">in</span> <span class="n">package</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">package</span><span class="p">[</span><span class="s1">&#39;externals&#39;</span><span class="p">]:</span>
-                    <span class="k">if</span> <span class="s1">&#39;modules&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
-                        <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">]:</span>
-                            <span class="n">mods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;module load </span><span class="si">{</span><span class="n">mod</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;externals&quot;</span> <span class="ow">in</span> <span class="n">package</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">package</span><span class="p">[</span><span class="s2">&quot;externals&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="s2">&quot;modules&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;modules&quot;</span><span class="p">]:</span>
+                            <span class="n">mods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module load </span><span class="si">{</span><span class="n">mod</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">mods_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mods</span><span class="p">)</span>
+    <span class="n">mods_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mods</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">mods_str</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_mpi_compilers</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">compiler</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">cray_compilers</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Get a list of compilers from a yaml file &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a list of compilers from a yaml file&quot;&quot;&quot;</span>
 
-    <span class="n">mpi_compilers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gnu&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mpicc&#39;</span><span class="p">:</span> <span class="s1">&#39;mpicc&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;mpicxx&#39;</span><span class="p">:</span> <span class="s1">&#39;mpicxx&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;mpifc&#39;</span><span class="p">:</span> <span class="s1">&#39;mpif90&#39;</span><span class="p">},</span>
-                     <span class="s1">&#39;intel&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mpicc&#39;</span><span class="p">:</span> <span class="s1">&#39;mpicc&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;mpicxx&#39;</span><span class="p">:</span> <span class="s1">&#39;mpicxx&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;mpifc&#39;</span><span class="p">:</span> <span class="s1">&#39;mpif90&#39;</span><span class="p">},</span>
-                     <span class="s1">&#39;impi&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mpicc&#39;</span><span class="p">:</span> <span class="s1">&#39;mpiicc&#39;</span><span class="p">,</span>
-                              <span class="s1">&#39;mpicxx&#39;</span><span class="p">:</span> <span class="s1">&#39;mpiicpc&#39;</span><span class="p">,</span>
-                              <span class="s1">&#39;mpifc&#39;</span><span class="p">:</span> <span class="s1">&#39;mpiifort&#39;</span><span class="p">},</span>
-                     <span class="s1">&#39;cray&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mpicc&#39;</span><span class="p">:</span> <span class="s1">&#39;cc&#39;</span><span class="p">,</span>
-                              <span class="s1">&#39;mpicxx&#39;</span><span class="p">:</span> <span class="s1">&#39;CC&#39;</span><span class="p">,</span>
-                              <span class="s1">&#39;mpifc&#39;</span><span class="p">:</span> <span class="s1">&#39;ftn&#39;</span><span class="p">}}</span>
+    <span class="n">mpi_compilers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;gnu&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;mpicc&quot;</span><span class="p">:</span> <span class="s2">&quot;mpicc&quot;</span><span class="p">,</span> <span class="s2">&quot;mpicxx&quot;</span><span class="p">:</span> <span class="s2">&quot;mpicxx&quot;</span><span class="p">,</span> <span class="s2">&quot;mpifc&quot;</span><span class="p">:</span> <span class="s2">&quot;mpif90&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;intel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;mpicc&quot;</span><span class="p">:</span> <span class="s2">&quot;mpicc&quot;</span><span class="p">,</span> <span class="s2">&quot;mpicxx&quot;</span><span class="p">:</span> <span class="s2">&quot;mpicxx&quot;</span><span class="p">,</span> <span class="s2">&quot;mpifc&quot;</span><span class="p">:</span> <span class="s2">&quot;mpif90&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;impi&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;mpicc&quot;</span><span class="p">:</span> <span class="s2">&quot;mpiicc&quot;</span><span class="p">,</span> <span class="s2">&quot;mpicxx&quot;</span><span class="p">:</span> <span class="s2">&quot;mpiicpc&quot;</span><span class="p">,</span> <span class="s2">&quot;mpifc&quot;</span><span class="p">:</span> <span class="s2">&quot;mpiifort&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;cray&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;mpicc&quot;</span><span class="p">:</span> <span class="s2">&quot;cc&quot;</span><span class="p">,</span> <span class="s2">&quot;mpicxx&quot;</span><span class="p">:</span> <span class="s2">&quot;CC&quot;</span><span class="p">,</span> <span class="s2">&quot;mpifc&quot;</span><span class="p">:</span> <span class="s2">&quot;ftn&quot;</span><span class="p">},</span>
+    <span class="p">}</span>
 
     <span class="n">mpi_compiler</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="c1"># first, get mpi compilers based on compiler</span>
@@ -513,13 +548,14 @@
 
     <span class="c1"># finally, get mpi compilers if this is a cray machine (highest priority)</span>
     <span class="k">if</span> <span class="n">cray_compilers</span><span class="p">:</span>
-        <span class="n">mpi_compiler</span> <span class="o">=</span> <span class="n">mpi_compilers</span><span class="p">[</span><span class="s1">&#39;cray&#39;</span><span class="p">]</span>
+        <span class="n">mpi_compiler</span> <span class="o">=</span> <span class="n">mpi_compilers</span><span class="p">[</span><span class="s2">&quot;cray&quot;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">mpi_compiler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Couldn&#39;t figure out MPI compilers for </span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2"> &quot;</span>
-                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Couldn&#39;t figure out MPI compilers for </span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">compiler</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">mpi</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">mpi_compiler</span><span class="p">[</span><span class="s1">&#39;mpicc&#39;</span><span class="p">],</span> <span class="n">mpi_compiler</span><span class="p">[</span><span class="s1">&#39;mpicxx&#39;</span><span class="p">],</span> <span class="n">mpi_compiler</span><span class="p">[</span><span class="s1">&#39;mpifc&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">mpi_compiler</span><span class="p">[</span><span class="s2">&quot;mpicc&quot;</span><span class="p">],</span> <span class="n">mpi_compiler</span><span class="p">[</span><span class="s2">&quot;mpicxx&quot;</span><span class="p">],</span> <span class="n">mpi_compiler</span><span class="p">[</span><span class="s2">&quot;mpifc&quot;</span><span class="p">]</span>
 </pre></div>
 
            </div>
