@@ -73,14 +73,18 @@ jobs:
 
       - if: ${{ steps.skip_check.outputs.should_skip != 'true' }}
         name: Set up Conda Environment
-        uses: conda-incubator/setup-miniconda@v3
+        uses: mamba-org/setup-micromamba@v2
         with:
-          activate-environment: "mache_ci"
-          miniforge-version: latest
-          channels: conda-forge
-          channel-priority: strict
-          auto-update-conda: true
-          python-version: ${{ matrix.python-version }}
+          environment-name: test-env
+          init-shell: bash
+          condarc: |
+              channel_priority: strict
+              channels: 
+                - conda-forge
+                - defaults
+          create-args: >-
+            python=${{ matrix.python-version }}
+          # activate-environment: "mache_ci"
 
       - if: ${{ steps.skip_check.outputs.should_skip != 'true' }}
         name: Install mache
@@ -96,6 +100,7 @@ jobs:
            CHECK_IMAGES: False
         run: |
           set -e
+          conda init
           conda activate mache_dev
           pip check
           mache sync diags --help
