@@ -18,6 +18,18 @@ env:
   PYTHON_VERSION: "3.10"
 
 jobs:
+  hello-world:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+      - uses: ./actions/staging-tests
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
   auto-update:
     runs-on: ubuntu-latest
     steps:
@@ -55,6 +67,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
       - name: Make PR and add reviewers and labels
         if: ${{ env.UP_TO_DATE == 'false' }}
         run: |
@@ -66,5 +84,5 @@ jobs:
           --reviewer altheaden,xylar \
           --label ci
         env:
-          GH_TOKEN: ${{ github.token }}
+          token: ${{ steps.app-token.outputs.token }}
 
