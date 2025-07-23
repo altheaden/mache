@@ -1,6 +1,9 @@
 name: Pre-commit auto-update
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     # Cron syntax:
     # 1. Entry: Minute when the process will be started [0-60]
